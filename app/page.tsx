@@ -15,7 +15,11 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-black text-white">
+    <main className="min-h-screen flex flex-col items-center justify-center bg-black text-white">
+      <div className="w-[800px] h-[600px]  mb-8 bg-white">
+        <div className="text-center text-black w-full h-[200px] bg-blue-400 skew-x-6"></div>
+        <div className="text-center text-black w-[100px] h-[200px] bg-red-400 skew-y-6"></div>
+      </div>
       <form
         onSubmit={handleSubmit}
         className="flex flex-col items-center gap-4"
