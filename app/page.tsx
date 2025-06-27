@@ -1,11 +1,13 @@
 "use client";
 
+import { CanvasComponent } from "@/components/Canvas";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Home() {
   const [text, setText] = useState("");
   const router = useRouter();
+  // Define Leva controls for position, rotation, and scale
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,9 +18,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-black text-white">
-      <div className="w-[800px] h-[600px]  mb-8 bg-white">
-        <div className="text-center text-black w-full h-[200px] bg-blue-400 skew-x-6"></div>
-        <div className="text-center text-black w-[100px] h-[200px] bg-red-400 skew-y-6"></div>
+      <div className="w-[800px] h-[500px]  mb-8 bg-white">
+        <CanvasComponent />
       </div>
       <form
         onSubmit={handleSubmit}
