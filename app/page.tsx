@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import AnimateView from "../components/AnimateView";
 
 export default function Home() {
   const [text, setText] = useState("");
@@ -15,17 +16,17 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-black text-white">
+    <main className="min-h-screen bg-black text-white flex flex-col items-center w-full justify-center">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col items-center gap-4"
+        className=" flex flex-col gap-4 max-w-[350px] w-full pt-8"
       >
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter a name or phrase"
-          className="px-4 py-2 rounded text-black bg-white"
+          className="px-4 py-2 text-white bg-black border-2 rounded w-full border-gray-800"
         />
         <button
           type="submit"

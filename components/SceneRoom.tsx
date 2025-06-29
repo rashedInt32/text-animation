@@ -1,15 +1,17 @@
-// ---- /components/SceneRoom.tsx (Immersive Rain Room Inspired by GIF) ----
+// ---- /components/SceneRoom.tsx (Immersive Rain Room with Expanded Particles) ----
 "use client";
 
 import { useFrame, useThree } from "@react-three/fiber";
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import * as THREE from "three";
+import { gsap } from "gsap";
 
 export default function SceneRoom({ inputText }: { inputText: string }) {
   const { camera } = useThree();
   const particleRef = useRef<THREE.Points>(null);
+  const roomRef = useRef<THREE.Mesh>(null);
 
-  // Generate dense multicolored falling particles
+  // Generate dense multicolored falling particles with wider x-range
   const particles = useMemo(() => {
     const count = 3000;
     const geometry = new THREE.BufferGeometry();
@@ -20,7 +22,7 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
     const colorPool = ["#ff007f", "#00ffff", "#ffff00", "#00ff00", "#ff00ff"];
 
     for (let i = 0; i < count; i++) {
-      const x = THREE.MathUtils.randFloatSpread(20);
+      const x = THREE.MathUtils.randFloatSpread(30); // Increased from 20 to 30
       const y = Math.random() * 10;
       const z = THREE.MathUtils.randFloatSpread(10);
       positions.set([x, y, z], i * 3);
@@ -46,6 +48,7 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
     return new THREE.Points(geometry, material);
   }, []);
 
+  // Particle animation (kept with useFrame for performance)
   useFrame(() => {
     const positions = particleRef.current!.geometry.attributes
       .position as THREE.BufferAttribute;
@@ -62,14 +65,43 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
     positions.needsUpdate = true;
   });
 
-  // Center camera
+  // GSAP Animations
+  useEffect(() => {
+    // Create a target vector for the camera to look at
+    const lookAtTarget = new THREE.Vector3(-5, 2.5, 0); // Start looking slightly left
+
+    // Camera animation: Left-to-right pan with dynamic lookAt
+    gsap.to(camera.position, {
+      x: 5, // Move from x = 0 to x = 5 (right)
+      duration: 4,
+      ease: "sine.inOut",
+      onUpdate: () => {
+        // Update lookAt target to move with camera, slightly ahead
+        lookAtTarget.x = camera.position.x + 2; // Look slightly ahead of camera's x position
+        camera.lookAt(lookAtTarget);
+      },
+    });
+
+    // Room animation: Subtle rotation for immersive effect
+    if (roomRef.current) {
+      gsap.to(roomRef.current.rotation, {
+        y: Math.PI * 0.1, // Small rotation
+        duration: 6,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut",
+      });
+    }
+  }, [camera]);
+
+  // Center camera initially
   camera.position.set(0, 2.5, 10);
-  camera.lookAt(0, 2.5, 0);
+  camera.lookAt(-5, 2.5, 0); // Initial lookAt slightly left
 
   return (
     <>
       {/* Full 6-Sided Room */}
-      <RoomBox />
+      <RoomBox ref={roomRef} />
 
       {/* Rain Particles */}
       <primitive ref={particleRef} object={particles} />
@@ -81,13 +113,14 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
   );
 }
 
-function RoomBox() {
+function RoomBox({ ...props }) {
   const wallMaterial = new THREE.MeshStandardMaterial({
     color: "black",
     side: THREE.BackSide,
   });
+
   return (
-    <mesh position={[0, 2.5, 0]}>
+    <mesh {...props} position={[0, 2.5, 0]}>
       <boxGeometry args={[20, 10, 10]} />
       <primitive object={wallMaterial} attach="material" />
     </mesh>
