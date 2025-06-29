@@ -1,4 +1,4 @@
-// ---- /components/SceneRoom.tsx (Immersive Rain Room with Text on Parabolic Path) ----
+// ---- /components/SceneRoom.tsx (Immersive Rain Room with Closer Text and 5 Animations) ----
 "use client";
 
 import { useFrame, useThree } from "@react-three/fiber";
@@ -70,7 +70,7 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
 
   // GSAP Animations
   useEffect(() => {
-    // Camera animation: Left-to-right pan with dynamic lookAt
+    // 1. Camera animation: Left-to-right pan with dynamic lookAt
     const lookAtTarget = new THREE.Vector3(-5, 2.5, 0);
     gsap.to(camera.position, {
       x: 5,
@@ -82,7 +82,7 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
       },
     });
 
-    // Room animation: Subtle rotation
+    // 2. Room animation: Subtle rotation
     if (roomRef.current) {
       gsap.to(roomRef.current.rotation, {
         y: Math.PI * 0.1,
@@ -93,11 +93,11 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
       });
     }
 
-    // Text animations: Typewriter effect + parabolic path
+    // 3 & 4 & 5. Text animations: Parabolic path + typewriter effect + character rotation
     if (textRef.current) {
-      // Parabolic path: x from -5 to 5, y rises to 5 then falls to 4
-      const tl = gsap.timeline();
-      tl.to(
+      // 3. Parabolic path: x from -5 to 5, y rises to 5 then falls to 4
+      const pathTl = gsap.timeline();
+      pathTl.to(
         textRef.current.position,
         {
           x: 5,
@@ -106,7 +106,7 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
         },
         0,
       );
-      tl.to(
+      pathTl.to(
         textRef.current.position,
         {
           y: 5,
@@ -115,7 +115,7 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
         },
         0,
       );
-      tl.to(
+      pathTl.to(
         textRef.current.position,
         {
           y: 4,
@@ -125,9 +125,10 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
         2,
       );
 
-      // Typewriter effect for individual characters
+      // 4. Typewriter effect + 5. Character rotation
       const chars = textRef.current.children as THREE.Mesh[];
       chars.forEach((char, i) => {
+        // Typewriter: Fade in and slide down
         gsap.from(char, {
           opacity: 0,
           y: 1,
@@ -135,10 +136,19 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
           delay: i * 0.1,
           ease: "power2.out",
         });
+        // Character rotation: Subtle y-axis wobble
+        gsap.to(char.rotation, {
+          y: Math.PI * 0.2,
+          duration: 1,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: i * 0.05,
+        });
       });
     }
 
-    // Light animation: Flicker effect
+    // 6. Light animation: Flicker effect
     if (lightRef.current) {
       const tl = gsap.timeline({ repeat: -1 });
       tl.to(lightRef.current, {
@@ -168,12 +178,12 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
   camera.position.set(0, 2.5, 10);
   camera.lookAt(-5, 2.5, 0);
 
-  // Split inputText into characters for individual meshes
+  // Split inputText into characters for individual meshes with closer spacing
   const textMeshes = inputText.split("").map((char, i) => (
     <Text
       key={i}
-      position={[i * 0.5 - (inputText.length * 0.5) / 2, 0, 0]}
-      fontSize={0.5}
+      position={[i * 1.5 - (inputText.length * 0.3) / 2, 0, 0]} // Reduced spacing from 0.5 to 0.3
+      fontSize={1.5}
       color="white"
       anchorX="center"
       anchorY="middle"
