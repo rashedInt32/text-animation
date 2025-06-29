@@ -1,15 +1,18 @@
-// ---- /components/SceneRoom.tsx (Immersive Rain Room with Expanded Particles) ----
+// ---- /components/SceneRoom.tsx (Immersive Rain Room with Text on Parabolic Path) ----
 "use client";
 
 import { useFrame, useThree } from "@react-three/fiber";
 import { useRef, useMemo, useEffect } from "react";
 import * as THREE from "three";
 import { gsap } from "gsap";
+import { Text } from "@react-three/drei";
 
 export default function SceneRoom({ inputText }: { inputText: string }) {
   const { camera } = useThree();
   const particleRef = useRef<THREE.Points>(null);
   const roomRef = useRef<THREE.Mesh>(null);
+  const textRef = useRef<THREE.Group>(null);
+  const lightRef = useRef<THREE.PointLight>(null);
 
   // Generate dense multicolored falling particles with wider x-range
   const particles = useMemo(() => {
@@ -22,7 +25,7 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
     const colorPool = ["#ff007f", "#00ffff", "#ffff00", "#00ff00", "#ff00ff"];
 
     for (let i = 0; i < count; i++) {
-      const x = THREE.MathUtils.randFloatSpread(30); // Increased from 20 to 30
+      const x = THREE.MathUtils.randFloatSpread(30);
       const y = Math.random() * 10;
       const z = THREE.MathUtils.randFloatSpread(10);
       positions.set([x, y, z], i * 3);
@@ -67,36 +70,117 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
 
   // GSAP Animations
   useEffect(() => {
-    // Create a target vector for the camera to look at
-    const lookAtTarget = new THREE.Vector3(-5, 2.5, 0); // Start looking slightly left
-
     // Camera animation: Left-to-right pan with dynamic lookAt
+    const lookAtTarget = new THREE.Vector3(-5, 2.5, 0);
     gsap.to(camera.position, {
-      x: 5, // Move from x = 0 to x = 5 (right)
+      x: 5,
       duration: 4,
       ease: "sine.inOut",
       onUpdate: () => {
-        // Update lookAt target to move with camera, slightly ahead
-        lookAtTarget.x = camera.position.x + 2; // Look slightly ahead of camera's x position
+        lookAtTarget.x = camera.position.x + 2;
         camera.lookAt(lookAtTarget);
       },
     });
 
-    // Room animation: Subtle rotation for immersive effect
+    // Room animation: Subtle rotation
     if (roomRef.current) {
       gsap.to(roomRef.current.rotation, {
-        y: Math.PI * 0.1, // Small rotation
+        y: Math.PI * 0.1,
         duration: 6,
         repeat: -1,
         yoyo: true,
         ease: "power1.inOut",
       });
     }
+
+    // Text animations: Typewriter effect + parabolic path
+    if (textRef.current) {
+      // Parabolic path: x from -5 to 5, y rises to 5 then falls to 4
+      const tl = gsap.timeline();
+      tl.to(
+        textRef.current.position,
+        {
+          x: 5,
+          duration: 4,
+          ease: "sine.inOut",
+        },
+        0,
+      );
+      tl.to(
+        textRef.current.position,
+        {
+          y: 5,
+          duration: 2,
+          ease: "power2.out",
+        },
+        0,
+      );
+      tl.to(
+        textRef.current.position,
+        {
+          y: 4,
+          duration: 2,
+          ease: "power2.in",
+        },
+        2,
+      );
+
+      // Typewriter effect for individual characters
+      const chars = textRef.current.children as THREE.Mesh[];
+      chars.forEach((char, i) => {
+        gsap.from(char, {
+          opacity: 0,
+          y: 1,
+          duration: 0.5,
+          delay: i * 0.1,
+          ease: "power2.out",
+        });
+      });
+    }
+
+    // Light animation: Flicker effect
+    if (lightRef.current) {
+      const tl = gsap.timeline({ repeat: -1 });
+      tl.to(lightRef.current, {
+        intensity: 2.0,
+        duration: 0.3,
+        ease: "power1.in",
+      })
+        .to(lightRef.current, {
+          intensity: 1.2,
+          duration: 0.5,
+          ease: "power1.out",
+        })
+        .to(lightRef.current, {
+          intensity: 1.8,
+          duration: 0.2,
+          ease: "power1.in",
+        })
+        .to(lightRef.current, {
+          intensity: 1.5,
+          duration: 0.4,
+          ease: "power1.out",
+        });
+    }
   }, [camera]);
 
   // Center camera initially
   camera.position.set(0, 2.5, 10);
-  camera.lookAt(-5, 2.5, 0); // Initial lookAt slightly left
+  camera.lookAt(-5, 2.5, 0);
+
+  // Split inputText into characters for individual meshes
+  const textMeshes = inputText.split("").map((char, i) => (
+    <Text
+      key={i}
+      position={[i * 0.5 - (inputText.length * 0.5) / 2, 0, 0]}
+      fontSize={0.5}
+      color="white"
+      anchorX="center"
+      anchorY="middle"
+    >
+      {char}
+    </Text>
+  ));
 
   return (
     <>
@@ -106,9 +190,14 @@ export default function SceneRoom({ inputText }: { inputText: string }) {
       {/* Rain Particles */}
       <primitive ref={particleRef} object={particles} />
 
+      {/* 2D Text Group (positioned to start at x = -5) */}
+      <group ref={textRef} position={[-5, 4, 0]}>
+        {textMeshes}
+      </group>
+
       {/* Lighting */}
       <ambientLight intensity={0.8} />
-      <pointLight position={[0, 5, 5]} intensity={1.5} />
+      <pointLight ref={lightRef} position={[0, 5, 5]} intensity={1.5} />
     </>
   );
 }
