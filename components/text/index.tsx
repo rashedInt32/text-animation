@@ -6,7 +6,7 @@ import { SplitText } from "gsap/SplitText";
 
 gsap.registerPlugin(SplitText);
 
-export default function Text() {
+export default function Text({ label }: { label: string }) {
   const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,17 +17,17 @@ export default function Text() {
         opacity: 0,
         stagger: 0.05,
         duration: 1,
-        ease: "power4.out",
+        //ease: "power4.out",
+        ease: "power4",
       });
     }
   }, []);
 
   return (
-    <div
-      ref={textRef}
-      className="text-white text-[40px] text-uppercase font-bold"
-    >
-      Hello, SplitText!
+    <div>
+      <div ref={textRef} className="text-white text-[60px] uppercase font-bold">
+        {label}
+      </div>
     </div>
   );
 }

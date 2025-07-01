@@ -4,6 +4,7 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { useSearchParams } from "next/navigation";
 import Particles from "./particles";
 import Text from "./text";
+import TextInputAnimation from "./text/Phrase";
 
 export default function ScenePage() {
   const searchParams = useSearchParams();
@@ -13,7 +14,8 @@ export default function ScenePage() {
     <>
       <div className="w-full aspect-video relative">
         <div className="absolute top-0 left-0 w-full h-full  flex items-center justify-center z-10">
-          <Text />
+          <Text label={text} />
+          <TextInputAnimation texts={text} />
         </div>
 
         <Canvas camera={{ position: [0, 2, 10], fov: 60 }}>
