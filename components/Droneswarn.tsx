@@ -8,11 +8,11 @@ gsap.registerPlugin(MotionPathPlugin);
 
 const NUM_DRONES = 8;
 const COLORS = [
-  "rgba(255,255,255,0.9)", // White
-  "rgba(0,255,255,0.8)", // Cyan
-  "rgba(255,200,255,0.85)", // Pink
-  "rgba(255,255,150,0.85)", // Warm yellow
-  "rgba(150,255,255,0.75)", // Soft teal
+  "rgba(255,255,255,0.9)",
+  "rgba(0,255,255,0.8)",
+  "rgba(255,200,255,0.85)",
+  "rgba(255,255,150,0.85)",
+  "rgba(150,255,255,0.75)",
 ];
 
 export default function DroneSwarm() {
@@ -24,25 +24,30 @@ export default function DroneSwarm() {
     if (!container) return;
 
     const { width, height } = container.getBoundingClientRect();
+    const verticalPadding = 40;
+    const minY = verticalPadding;
+    const maxY = height - verticalPadding;
 
     droneRefs.current = droneRefs.current.slice(0, NUM_DRONES);
 
     droneRefs.current.forEach((drone, i) => {
       const launchDrone = () => {
-        const baseY = height / 2;
-        const yStart = baseY - 20 + Math.random() * 40;
+        const yStart = minY + Math.random() * (maxY - minY);
+
+        const yOffset = 100;
+        const clampY = (y: number) => Math.min(maxY, Math.max(minY, y)); // Constrain within bounds
 
         const cp1 = {
           x: width * 0.33,
-          y: yStart - 50 + Math.random() * 100,
+          y: clampY(yStart - yOffset + Math.random() * (yOffset * 2)),
         };
         const cp2 = {
           x: width * 0.66,
-          y: yStart - 50 + Math.random() * 100,
+          y: clampY(yStart - yOffset + Math.random() * (yOffset * 2)),
         };
         const end = {
           x: width + 100,
-          y: yStart + Math.random() * 30 - 15,
+          y: clampY(yStart + Math.random() * 30 - 15),
         };
 
         gsap.set(drone, {
