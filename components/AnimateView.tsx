@@ -8,14 +8,13 @@ import TextInputAnimation from "./text/Phrase";
 
 export default function ScenePage() {
   const searchParams = useSearchParams();
-  const text = searchParams.get("text") || "";
+  const textInput = searchParams.get("text") || "";
 
   return (
     <>
       <div className="w-full aspect-video relative">
         <div className="absolute top-0 left-0 w-full h-full  flex items-center justify-center z-10">
-          <Text label={text} />
-          <TextInputAnimation texts={text} />
+          <TextInputAnimation input={textInput} />
         </div>
 
         <Canvas camera={{ position: [0, 2, 10], fov: 60 }}>
