@@ -14,8 +14,8 @@ export default function MultiComet() {
 
     cometRefs.current.forEach((comet) => {
       const animateComet = () => {
-        const xTarget = -400 - Math.random() * 200;
-        const yTarget = -300 - Math.random() * 100;
+        const xTarget = 400 + Math.random() * 200; // ➡️ to right
+        const yTarget = -300 - Math.random() * 100; // ⬆️ upward
         const duration = 4 + Math.random() * 2;
 
         const tl = gsap.timeline({
@@ -45,7 +45,7 @@ export default function MultiComet() {
             ease: "power2.out",
           },
           "<",
-        ); // start movement at same time as fade in
+        );
 
         tl.to(
           comet,
@@ -55,7 +55,7 @@ export default function MultiComet() {
             ease: "power1.out",
           },
           `-=${duration * 0.3}`,
-        ); // start fading out slightly before end
+        );
       };
 
       animateComet();
@@ -73,8 +73,8 @@ export default function MultiComet() {
           ref={(el) => {
             if (el) cometRefs.current[i] = el;
           }}
-          className="absolute bottom-0 right-0 h-1 bg-gradient-to-l from-white to-transparent opacity-0 blur-sm"
-          style={{ transform: "rotate(-45deg)", width: "30rem" }}
+          className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-white to-transparent opacity-0 blur-sm"
+          style={{ transform: "rotate(45deg)", width: "30rem" }} // 🌀 comet angle
         />
       ))}
     </div>
