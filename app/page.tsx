@@ -15,7 +15,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen text-white flex flex-col items-center w-full justify-center">
+    <main className="min-h-screen text-white flex flex-col items-center w-full justify-center bg-neutral-100">
       <form
         onSubmit={handleSubmit}
         className=" flex flex-col gap-4 max-w-[350px] w-full pt-8"
