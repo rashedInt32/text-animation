@@ -14,8 +14,8 @@ export default function MultiComet() {
 
     cometRefs.current.forEach((comet) => {
       const animateComet = () => {
-        const xTarget = 400 + Math.random() * 200; // ➡️ to right
-        const yTarget = -300 - Math.random() * 100; // ⬆️ upward
+        const xTarget = 400 + Math.random() * 200;
+        const yTarget = -300 - Math.random() * 100;
         const duration = 4 + Math.random() * 2;
 
         const tl = gsap.timeline({
@@ -74,7 +74,7 @@ export default function MultiComet() {
             if (el) cometRefs.current[i] = el;
           }}
           className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-white to-transparent opacity-0 blur-sm"
-          style={{ transform: "rotate(45deg)", width: "30rem" }} // 🌀 comet angle
+          style={{ transform: "rotate(45deg)", width: "30rem" }}
         />
       ))}
     </div>

@@ -1,4 +1,3 @@
-// components/FloatingCube.tsx
 "use client";
 
 import { useEffect, useRef } from "react";

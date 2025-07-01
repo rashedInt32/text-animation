@@ -26,8 +26,8 @@ export default function TextInputAnimation({ input }: { input: string }) {
     if (circleRef.current && containerRef.current) {
       const { width, height } = containerRef.current.getBoundingClientRect();
 
-      const baseY = (2 / 3) * height; // Start & end height (lower third)
-      const peakY = (1 / 3) * height; // Peak of the arc
+      const baseY = (2 / 3) * height;
+      const peakY = (1 / 3) * height;
 
       gsap.set(circleRef.current, {
         x: 0,

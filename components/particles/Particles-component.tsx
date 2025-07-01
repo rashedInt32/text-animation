@@ -1,6 +1,6 @@
 import { useFrame } from "@react-three/fiber";
 import { useRef, useMemo } from "react";
-import * as THREE from "three"; // 👈 needed for typing
+import * as THREE from "three";
 
 export default function ParticlesComponent({
   count = 3000,
@@ -11,7 +11,7 @@ export default function ParticlesComponent({
   rangeX?: number;
   rangeZ?: number;
 }) {
-  const particlesRef = useRef<THREE.Points | null>(null); // ✅ properly typed
+  const particlesRef = useRef<THREE.Points | null>(null);
   const colorPool = useMemo(
     () => ["#ff007f", "#00ffff", "#ffff00", "#00ff00", "#ff00ff"],
     [],
