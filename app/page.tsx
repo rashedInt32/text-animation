@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import AnimateView from "../components/AnimateView";
 
 export default function Home() {
   const [text, setText] = useState("");

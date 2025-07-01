@@ -12,7 +12,7 @@ export default function MultiComet() {
   useEffect(() => {
     cometRefs.current = cometRefs.current.slice(0, NUM_COMETS);
 
-    cometRefs.current.forEach((comet, index) => {
+    cometRefs.current.forEach((comet) => {
       const animateComet = () => {
         const xTarget = -400 - Math.random() * 200;
         const yTarget = -300 - Math.random() * 100;
